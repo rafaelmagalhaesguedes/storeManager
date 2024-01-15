@@ -50,4 +50,30 @@ describe('Products Service', function () {
       stub.restore();
     });
   });
+
+  describe('createProduct', function () {
+    it('should create a new product', async function () {
+      const mockProduct = { id: 1, name: 'Product 1' };
+      const stub = sinon.stub(productsModel, 'createProduct').returns(mockProduct);
+
+      const product = await productsService.createProduct('Product 1');
+
+      expect(product).to.deep.equal(mockProduct);
+
+      stub.restore();
+    });
+
+    it('should throw an error if name is empty', async function () {
+      const stub = sinon.stub(productsModel, 'createProduct').returns(null);
+
+      try {
+        await productsService.createProduct('');
+      } catch (error) {
+        expect(error).to.be.an('error');
+        expect(error.message).to.equal('Product name is required');
+      }
+
+      stub.restore();
+    });
+  });
 });
