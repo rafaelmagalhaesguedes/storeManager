@@ -6,7 +6,7 @@ const { expect } = chai;
 
 const mockProducts = [{ id: 1, name: 'Product 1' }, { id: 2, name: 'Product 2' }];
 
-describe('findAllProducts', function () {
+describe('Products Model', function () {
   it('should return an array', async function () {
     const stub = sinon.stub(ProductsModel, 'findAllProducts').returns(mockProducts);
 
