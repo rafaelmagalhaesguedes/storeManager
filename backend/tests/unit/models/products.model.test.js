@@ -36,4 +36,14 @@ describe('Products Model', function () {
 
     stub.restore();
   });
+
+  it('should create a new product', async function () {
+    const mockProduct = { id: 1, name: 'Product 1' };
+    const stub = sinon.stub(ProductsModel, 'createProduct').returns(mockProduct);
+
+    const product = await ProductsModel.createProduct('Product 1');
+    expect(product).to.deep.equal(mockProduct);
+
+    stub.restore();
+  });
 });
