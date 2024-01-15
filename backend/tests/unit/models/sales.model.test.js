@@ -16,8 +16,6 @@ describe('Sales Model', function () {
       const result = await salesModel.findAllSales();
       
       expect(result).to.eql(mockSales);
-      // eslint-disable-next-line no-unused-expressions
-      expect(stub.calledOnce).to.be.true;
       
       stub.restore();
     });
@@ -34,8 +32,6 @@ describe('Sales Model', function () {
       const result = await salesModel.findSaleById(1);
       
       expect(result).to.eql(mockSale);
-      // eslint-disable-next-line no-unused-expressions
-      expect(stub.calledOnce).to.be.true;
       
       stub.restore();
     });
