@@ -21,9 +21,8 @@ const getSaleById = async (req, res) => {
 };
 
 const createSale = async (req, res) => {
-  const itemsSold = req.body;
   try {
-    const sale = await salesService.createSale(itemsSold);
+    const sale = await salesService.createSale(req.body);
     res.status(201).json(sale);
   } catch (error) {
     res.status(500).json({ message: error.message });
