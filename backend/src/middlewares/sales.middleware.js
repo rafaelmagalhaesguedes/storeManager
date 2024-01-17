@@ -1,11 +1,17 @@
 const Joi = require('joi');
 const productsModel = require('../models/products.model');
 
+/* 
+  Schema to validate the items in the request body.
+*/
 const schema = Joi.object({
   productId: Joi.number().required(),
   quantity: Joi.number().min(1).required(),
 });
 
+/* 
+  Function to check if the product exists in the database.
+*/
 const checkProductExistence = async (productId, res) => {
   const product = await productsModel.findProductById(productId);
   if (!product) {
@@ -13,6 +19,9 @@ const checkProductExistence = async (productId, res) => {
   }
 };
 
+/* 
+  Function to handle the error messages.
+*/
 const handleErrorMessage = (errorMessage, res) => {
   const productErrorMessage = errorMessage.includes('"productId" is required');
   const quantityErrorMessage = errorMessage.includes('"quantity" is required');
@@ -26,6 +35,9 @@ const handleErrorMessage = (errorMessage, res) => {
   }
 };
 
+/* 
+  Function to validate the items in the request body.
+*/
 const validateItem = async (item, res) => {
   const { error } = schema.validate(item);
 
@@ -39,6 +51,9 @@ const validateItem = async (item, res) => {
   if (productResponse) return productResponse;
 };
 
+/* 
+  Function to validate the sale.
+*/
 const validateSale = async (req, res, next) => {
   const itemsSold = req.body;
 
