@@ -1,5 +1,6 @@
 const express = require('express');
 const salesController = require('../controllers/sales.controller');
+const middlewares = require('../middlewares/sales.middleware');
 
 const router = express.Router();
 router.use(express.json());
@@ -11,6 +12,6 @@ router.get('/sales', salesController.getAllSales);
 router.get('/sales/:id', salesController.getSaleById);
 
 // Route to create a sale
-router.post('/sales', salesController.createSale);
+router.post('/sales', middlewares.validateSale, salesController.createSale);
 
 module.exports = router;
