@@ -1,6 +1,6 @@
 const express = require('express');
 const productsController = require('../controllers/products.controller');
-const middlewares = require('../middlewares/products.validation');
+const middlewares = require('../middlewares/products.middleware');
 
 const router = express.Router();
 router.use(express.json());
