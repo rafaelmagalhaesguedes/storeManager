@@ -14,4 +14,7 @@ router.get('/products/:id', productsController.getProductById);
 // Routes of products create
 router.post('/products', middlewares.validateProductName, productsController.createProduct);
 
+// Routes of products update
+router.put('/products/:id', middlewares.validateProductName, productsController.updateProduct);
+
 module.exports = router;
