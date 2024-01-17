@@ -20,8 +20,21 @@ const createProduct = async (name) => {
   return product;
 };
 
+const updateProduct = async (id, name) => {
+  const product = await productsModel.findProductById(id);
+
+  if (!product) throw new Error('Product not found');
+  
+  await productsModel.updateProduct(id, name);
+
+  const updatedProduct = await productsModel.findProductById(id);
+
+  return updatedProduct;
+};
+
 module.exports = {
   findAllProducts,
   findProductById,
   createProduct,
+  updateProduct,
 };
