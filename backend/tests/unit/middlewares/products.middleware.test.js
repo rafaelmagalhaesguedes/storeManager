@@ -1,6 +1,6 @@
 const sinon = require('sinon');
 const { expect } = require('chai');
-const productsValidation = require('../../../src/middlewares/products.validation');
+const productsValidation = require('../../../src/middlewares/products.middleware');
 
 describe('Products Validation Middleware', function () {
   it('should call next when name is valid', function () {
