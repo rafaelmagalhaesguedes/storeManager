@@ -76,4 +76,34 @@ describe('Products Service', function () {
       stub.restore();
     });
   });
+
+  describe('updateProduct', function () {
+    it('should update a product', async function () {
+      const mockProduct = {
+        id: 1,
+        name: 'Martelo do Batman',
+      };
+    
+      const stub = sinon.stub(productsModel, 'updateProduct').returns({ id: 1, name: 'Martelo de Thor' });
+    
+      const result = await productsService.updateProduct(mockProduct.id, mockProduct.name);
+    
+      expect(result).to.deep.equal({ id: 1, name: 'Martelo de Thor' });
+    
+      stub.restore();
+    });
+
+    it('should throw an error when the product does not exist', async function () {
+      const stub = sinon.stub(productsModel, 'updateProduct').throws(new Error('Product not found'));
+
+      try {
+        await productsService.updateProduct(1, 'Cruzeirão Cabuloso');
+      } catch (error) {
+        expect(error).to.be.an('error');
+        expect(error.message).to.equal('Product not found');
+      } finally {
+        stub.restore();
+      }
+    });
+  });
 });
