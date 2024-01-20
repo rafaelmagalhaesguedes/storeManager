@@ -5,7 +5,90 @@ const productsService = require('../../../src/services/products.service');
 
 const { expect } = chai;
 
+const productNotFound = new Error('Product not found');
+
 describe('Products Controller', function () {
+  describe('Get All Products', function () {
+    it('should return all products', async function () {
+      const mockProducts = [
+        {
+          id: 1,
+          name: 'Product 1',
+        },
+        {
+          id: 2,
+          name: 'Product 2',
+        },
+      ];
+
+      const req = {};
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      const stub = sinon.stub(productsService, 'findAllProducts').returns(mockProducts);
+
+      await productsController.getAllProducts(req, res);
+
+      expect(res.status.calledOnceWith(200)).to.equal(true);
+
+      expect(res.json.calledOnceWith(mockProducts)).to.equal(true);
+
+      stub.restore();
+    });
+  });
+
+  describe('Get Product By Id', function () {
+    it('should return a product', async function () {
+      const mockProduct = {
+        id: 1,
+        name: 'Product 1',
+      };
+
+      const req = {
+        params: { id: 1 },
+      };
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      const stub = sinon.stub(productsService, 'findProductById').returns(mockProduct);
+
+      await productsController.getProductById(req, res);
+
+      expect(res.status.calledOnceWith(200)).to.equal(true);
+      expect(res.json.calledOnceWith(mockProduct)).to.equal(true);
+
+      stub.restore();
+    });
+
+    it('should return an error when the product does not exist', async function () {
+      const req = {
+        params: { id: 1 },
+      };
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      const stub = sinon.stub(productsService, 'findProductById').throws(productNotFound);
+
+      try {
+        await productsController.getProductById(req, res);
+      } catch (error) {
+        expect(res.status.calledOnceWith(404)).to.equal(true);
+        expect(res.json.calledOnceWith({ message: 'Product not found' })).to.equal(true);
+      } finally {
+        stub.restore();
+      }
+    });
+  });
+  
   describe('Create Product', function () {
     it('should create a product', async function () {
       const mockProduct = {
@@ -96,7 +179,7 @@ describe('Products Controller', function () {
         json: sinon.stub(),
       };
       
-      const stub = sinon.stub(productsService, 'updateProduct').throws(new Error('Product not found'));
+      const stub = sinon.stub(productsService, 'updateProduct').throws(productNotFound);
       
       try {
         await productsController.updateProduct(req, res);
@@ -146,7 +229,7 @@ describe('Products Controller', function () {
         json: sinon.stub(),
       };
       
-      stub = sinon.stub(productsService, 'deleteProduct').throws(new Error('Product not found'));
+      stub = sinon.stub(productsService, 'deleteProduct').throws(productNotFound);
       
       try {
         await productsController.deleteProduct(req, res);
