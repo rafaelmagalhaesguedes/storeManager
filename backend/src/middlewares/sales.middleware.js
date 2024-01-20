@@ -67,4 +67,35 @@ const validateSale = async (req, res, next) => {
   next();
 };
 
-module.exports = { validateSale };
+/* 
+  Schema to validate the quantity in the request body.
+*/
+const schemaQuantity = Joi.object({
+  quantity: Joi.number().min(1).required(),
+});
+
+/* 
+  Function to validate the quantity in the request body.
+*/
+const validateSalesProductQuantity = async (req, res, next) => {
+  const { quantity } = req.body;
+
+  const { error } = schemaQuantity.validate({ quantity });
+
+  if (error) {
+    const errorMessage = error.details[0].message;
+
+    if (errorMessage.includes('"quantity" is required')) {
+      return res.status(400).json({ message: errorMessage });
+    }
+
+    if (errorMessage.includes('"quantity" must be greater than or equal to 1')) {
+      return res.status(422).json({ message: errorMessage });
+    }
+
+    return res.status(400).json({ message: errorMessage });
+  }
+  next();
+};
+
+module.exports = { validateSale, validateSalesProductQuantity };
