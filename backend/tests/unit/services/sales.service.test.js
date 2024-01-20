@@ -1,8 +1,10 @@
 const chai = require('chai');
 const sinon = require('sinon');
+const chaiAsPromised = require('chai-as-promised');
 const salesService = require('../../../src/services/sales.service');
 const salesModel = require('../../../src/models/sales.model');
 
+chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe('Sales Service', function () {
@@ -38,19 +40,6 @@ describe('Sales Service', function () {
 
       stub.restore();
     });
-
-    it('should return 404 when sale is not found', async function () {
-      const stub = sinon.stub(salesService, 'findSaleById').returns(Promise.resolve(null));
-
-      try {
-        await salesService.findSaleById(999);
-      } catch (err) {
-        expect(err.status).to.equal(404);
-        expect(err.message).to.equal('Sale not found');
-      }
-
-      stub.restore();
-    });
   });
 
   describe('createSale', function () {
@@ -79,6 +68,37 @@ describe('Sales Service', function () {
       expect(result).to.eql({});
 
       stub.restore();
+    });
+  });
+
+  describe('updateSaleProductQuantity', function () {
+    afterEach(function () {
+      sinon.restore();
+    });
+  
+    it('should throw an error if the sale does not exist', async function () {
+      sinon.stub(salesModel, 'findSale').returns([]);
+      
+      await expect(salesService.updateSaleProductQuantity(1, 1, 1)).to.be.rejectedWith('Sale not found');
+    });
+  
+    it('should throw an error if the product does not exist', async function () {
+      sinon.stub(salesModel, 'findSale').returns([{}]);
+      sinon.stub(salesModel, 'findProduct').returns([]);
+      
+      await expect(salesService.updateSaleProductQuantity(1, 1, 1)).to.be.rejectedWith('Product not found in sale');
+    });
+  
+    it('should update the product quantity and return the updated product', async function () {
+      const updatedProduct = { saleId: 1, productId: 1, quantity: 1 };
+      
+      sinon.stub(salesModel, 'findSale').returns([{}]);
+      sinon.stub(salesModel, 'findProduct').returns([{}]);
+      sinon.stub(salesModel, 'updateSaleProductQuantity').returns([updatedProduct]);
+      
+      const result = await salesService.updateSaleProductQuantity(1, 1, 1);
+      
+      expect(result).to.eql(updatedProduct);
     });
   });
 });
