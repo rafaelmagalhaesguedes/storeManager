@@ -23,8 +23,15 @@ const createSale = async (itemsSold) => {
   return { id: sale.insertId, itemsSold };
 };
 
+const deleteSale = async (id) => {
+  const result = await salesModel.deleteSale(id);
+
+  return result;
+};
+
 module.exports = {
   findAllSales,
   findSaleById,
   createSale,
+  deleteSale,
 };
