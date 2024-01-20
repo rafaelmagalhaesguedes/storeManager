@@ -93,8 +93,8 @@ describe('Sales Controller', function () {
 
       await salesController.createSale(req, res);
 
-      expect(res.status.calledOnceWith(201));
-      expect(res.json.calledOnceWith(sale));
+      expect(res.status.calledOnceWith(201)).to.equal(true);
+      expect(res.json.calledOnceWith(sale)).to.equal(true);
 
       salesService.createSale.restore();
     });
@@ -126,6 +126,42 @@ describe('Sales Controller', function () {
       expect(res.json.calledOnceWith({ message: 'Error' }));
 
       salesService.createSale.restore();
+    });
+  });
+
+  describe('deleteSale', function () {
+    it('should delete a sale and return status 204', async function () {
+      const req = { params: { id: 1 } };
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      sinon.stub(salesService, 'deleteSale').resolves();
+
+      await salesController.deleteSale(req, res);
+
+      expect(res.status.calledOnceWith(204)).to.equal(false);
+      expect(res.json.calledOnceWith()).to.equal(true);
+
+      salesService.deleteSale.restore();
+    });
+
+    it('should return status 404 sale not found', async function () {
+      const req = { params: { id: 666 } };
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      sinon.stub(salesService, 'deleteSale').rejects(new Error('Sale not found'));
+
+      await salesController.deleteSale(req, res);
+
+      expect(res.status.calledOnceWith(404)).to.equal(true);
+      expect(res.json.calledOnceWith({ message: 'Sale not found' })).to.equal(true);
+
+      salesService.deleteSale.restore();
     });
   });
 });
