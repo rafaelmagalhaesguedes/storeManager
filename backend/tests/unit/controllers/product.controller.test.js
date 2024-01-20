@@ -108,4 +108,52 @@ describe('Products Controller', function () {
       }
     });
   });
+
+  describe('Delete Product', function () {
+    let stub;
+  
+    afterEach(function () {
+      stub.restore();
+    });
+  
+    it('should delete a product', async function () {
+      const req = {
+        params: { id: 1 },
+      };
+      
+      const res = {
+        status: sinon.stub().returnsThis(),
+        end: sinon.stub(),
+      };
+      
+      stub = sinon.stub(productsService, 'deleteProduct').returns({ affectedRows: 1 });
+      
+      await productsController.deleteProduct(req, res);
+      
+      expect(res.status.calledOnceWith(204)).to.equal(true);
+      expect(res.end.calledOnce).to.equal(true);
+      
+      stub.restore();
+    });
+  
+    it('should return an error when the product does not exist', async function () {
+      const req = {
+        params: { id: 1 },
+      };
+      
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+      
+      stub = sinon.stub(productsService, 'deleteProduct').throws(new Error('Product not found'));
+      
+      try {
+        await productsController.deleteProduct(req, res);
+      } catch (error) {
+        expect(res.status.calledOnceWith(404)).to.equal(true);
+        expect(res.json.calledOnceWith({ message: 'Product not found' })).to.equal(true);
+      }
+    });
+  });
 });
