@@ -40,9 +40,21 @@ const createSaleProduct = async (saleId, productId, quantity) => {
   return saleProduct;
 };
 
+const deleteSale = async (id) => {
+  const [saleExists] = await connection.execute('SELECT * FROM sales WHERE id = ?', [id]);
+  
+  if (saleExists.length === 0) {
+    throw new Error('Sale not found');
+  }
+
+  const [result] = await connection.execute('DELETE FROM sales WHERE id = ?', [id]);
+  return result;
+};
+
 module.exports = {
   findAllSales,
   findSaleById,
   createSale,
   createSaleProduct,
+  deleteSale,
 };
