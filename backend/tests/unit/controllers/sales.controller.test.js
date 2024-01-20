@@ -164,4 +164,78 @@ describe('Sales Controller', function () {
       salesService.deleteSale.restore();
     });
   });
+
+  describe('updateSaleProductQuantity', function () {
+    it('should update a sale product quantity and return status 200', async function () {
+      const req = {
+        params: { id: 1 },
+        body: {
+          productId: 1,
+          quantity: 1,
+        },
+      };
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      sinon.stub(salesService, 'updateSaleProductQuantity').resolves();
+
+      await salesController.updateSaleProductQuantity(req, res);
+
+      expect(res.status.calledOnceWith(200)).to.equal(true);
+      expect(res.json.calledOnceWith()).to.equal(true);
+
+      salesService.updateSaleProductQuantity.restore();
+    });
+
+    it('should return status 404 sale not found', async function () {
+      const req = {
+        params: { id: 666 },
+        body: {
+          productId: 1,
+          quantity: 1,
+        },
+      };
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      sinon.stub(salesService, 'updateSaleProductQuantity').rejects(new Error('Sale not found'));
+
+      await salesController.updateSaleProductQuantity(req, res);
+
+      expect(res.status.calledOnceWith(404)).to.equal(true);
+      expect(res.json.calledOnceWith({ message: 'Sale not found' })).to.equal(true);
+
+      salesService.updateSaleProductQuantity.restore();
+    });
+
+    it('should return status 404 product not found in sale', async function () {
+      const req = {
+        params: { id: 1 },
+        body: {
+          productId: 666,
+          quantity: 1,
+        },
+      };
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      sinon.stub(salesService, 'updateSaleProductQuantity').rejects(new Error('Product not found in sale'));
+
+      await salesController.updateSaleProductQuantity(req, res);
+
+      expect(res.status.calledOnceWith(404)).to.equal(true);
+      expect(res.json.calledOnceWith({ message: 'Product not found in sale' })).to.equal(true);
+
+      salesService.updateSaleProductQuantity.restore();
+    });
+  });
 });
