@@ -8,10 +8,6 @@ const { expect } = chai;
 const mockProducts = [{ id: 1, name: 'Product 1' }, { id: 2, name: 'Product 2' }];
 
 describe('Products Service', function () {
-  afterEach(function () {
-    sinon.restore();
-  });
-
   describe('findAllProducts', function () {
     it('should return all products', async function () {
       const stub = sinon.stub(productsModel, 'findAllProducts').returns(mockProducts);
@@ -78,31 +74,38 @@ describe('Products Service', function () {
   });
 
   describe('updateProduct', function () {
-    it('should update a product', async function () {
-      const mockProduct = {
-        id: 1,
-        name: 'Martelo do Batman',
-      };
-    
-      const stub = sinon.stub(productsModel, 'updateProduct').returns({ id: 1, name: 'Martelo de Thor' });
-    
-      const result = await productsService.updateProduct(mockProduct.id, mockProduct.name);
-    
-      expect(result).to.deep.equal({ id: 1, name: 'Martelo de Thor' });
-    
-      stub.restore();
+    afterEach(function () {
+      sinon.restore();
     });
 
-    it('should throw an error when the product does not exist', async function () {
-      const stub = sinon.stub(productsModel, 'updateProduct').throws(new Error('Product not found'));
+    it('should update an existing product and return the updated product', async function () {
+      const mockProduct = { id: 1, name: 'Product 1' };
+      const updatedProduct = { id: 1, name: 'Updated Product' };
+
+      sinon.stub(productsModel, 'findProductById')
+        .onFirstCall()
+        .returns(mockProduct)
+        .onSecondCall()
+        .returns(updatedProduct);
+
+      sinon.stub(productsModel, 'updateProduct')
+        .returns(Promise.resolve());
+        
+      const result = await productsService.updateProduct(mockProduct.id, updatedProduct.name);
+
+      expect(result).to.deep.equal(updatedProduct);
+    });
+
+    it('should throw an error if the product does not exist', async function () {
+      const productId = 1;
+
+      sinon.stub(productsModel, 'findProductById').returns(null);
 
       try {
-        await productsService.updateProduct(1, 'Cruzeirão Cabuloso');
+        await productsService.updateProduct(productId, 'Product 1');
       } catch (error) {
         expect(error).to.be.an('error');
         expect(error.message).to.equal('Product not found');
-      } finally {
-        stub.restore();
       }
     });
   });
