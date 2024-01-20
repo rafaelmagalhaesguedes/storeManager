@@ -47,4 +47,32 @@ describe('Sales Model', function () {
       stub.restore();
     });
   });
+
+  describe('createSaleProduct()', function () {
+    it('should create a sale product', async function () {
+      const mockSaleProduct = { id: 1 };
+
+      const stub = sinon.stub(connection, 'execute').resolves([{ id: 1 }]);
+
+      const saleProduct = await salesModel.createSaleProduct(1, 1, 1);
+
+      expect(saleProduct).to.eql(mockSaleProduct);
+
+      stub.restore();
+    });
+  });
+
+  describe('deleteSale()', function () {
+    it('should delete a sale', async function () {
+      const mockResult = { affectedRows: 1 };
+
+      const stub = sinon.stub(connection, 'execute').resolves([{ affectedRows: 1 }]);
+
+      const result = await salesModel.deleteSale(1);
+
+      expect(result).to.eql(mockResult);
+
+      stub.restore();
+    });
+  });
 });
