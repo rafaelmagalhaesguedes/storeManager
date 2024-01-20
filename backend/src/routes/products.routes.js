@@ -17,4 +17,7 @@ router.post('/products', middlewares.validateProductName, productsController.cre
 // Routes of products update
 router.put('/products/:id', middlewares.validateProductName, productsController.updateProduct);
 
+// Routes of products delete
+router.delete('/products/:id', productsController.deleteProduct);
+
 module.exports = router;
