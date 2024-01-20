@@ -23,7 +23,7 @@ const findSaleById = async (id) => {
      WHERE sales.id = ?
      ORDER BY productId ASC`, [id]);
      
-  return rows;
+  return rows[0]; // Return the first element of the array
 };
 
 const createSale = async () => {
