@@ -24,7 +24,7 @@ describe('Sales Model', function () {
     it('should return a sale', async function () {
       const mockSale = { id: 1, productId: 1, quantity: 1 };
 
-      const stub = sinon.stub(connection, 'execute').resolves([[mockSale]]);
+      const stub = sinon.stub(connection, 'execute').resolves([mockSale]);
 
       const sale = await salesModel.findSaleById(1);
 
