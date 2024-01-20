@@ -52,4 +52,33 @@ describe('Sales Service', function () {
       stub.restore();
     });
   });
+
+  describe('createSale', function () {
+    it('should create a sale', async function () {
+      const mockSale = [
+        { productId: 1, quantity: 2 },
+        { productId: 2, quantity: 2 },
+      ];
+
+      const stub = sinon.stub(salesModel, 'createSale').returns({ insertId: 1 });
+
+      const result = await salesService.createSale(mockSale);
+
+      expect(result).to.eql({ id: 1, itemsSold: mockSale });
+
+      stub.restore();
+    });
+  });
+
+  describe('deleteSale', function () {
+    it('should delete a sale', async function () {
+      const stub = sinon.stub(salesModel, 'deleteSale').returns({});
+
+      const result = await salesService.deleteSale(1);
+
+      expect(result).to.eql({});
+
+      stub.restore();
+    });
+  });
 });
