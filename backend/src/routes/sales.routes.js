@@ -17,4 +17,11 @@ router.post('/sales', middlewares.validateSale, salesController.createSale);
 // Route to delete a sale
 router.delete('/sales/:id', salesController.deleteSale);
 
+// Route to update a sale product quantity
+router.put(
+  '/sales/:saleId/products/:productId/quantity',
+  middlewares.validateSalesProductQuantity,
+  salesController.updateSaleProductQuantity,
+);
+
 module.exports = router;
