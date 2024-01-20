@@ -14,4 +14,7 @@ router.get('/sales/:id', salesController.getSaleById);
 // Route to create a sale
 router.post('/sales', middlewares.validateSale, salesController.createSale);
 
+// Route to delete a sale
+router.delete('/sales/:id', salesController.deleteSale);
+
 module.exports = router;
