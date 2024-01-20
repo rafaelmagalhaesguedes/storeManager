@@ -1,49 +1,62 @@
 const chai = require('chai');
 const sinon = require('sinon');
 const ProductsModel = require('../../../src/models/products.model');
+const connection = require('../../../src/models/connection');
 
 const { expect } = chai;
 
 const mockProducts = [{ id: 1, name: 'Product 1' }, { id: 2, name: 'Product 2' }];
 
 describe('Products Model', function () {
-  it('should return an array', async function () {
-    const stub = sinon.stub(ProductsModel, 'findAllProducts').returns(mockProducts);
+  // Create a Sinon sandbox
+  const sandbox = sinon.createSandbox();
 
-    const products = await ProductsModel.findAllProducts();
-    expect(products).to.be.an('array');
-    expect(products).to.deep.equal(mockProducts);
-
-    stub.restore();
+  // Restore all stubs after each test
+  afterEach(function () {
+    sandbox.restore();
   });
 
-  it('should return a product if a matching ID is found', async function () {
-    const mockProduct = { id: 1, name: 'Product 1' };
-    const stub = sinon.stub(ProductsModel, 'findProductById').returns(mockProduct);
+  describe('findAllProducts()', function () {
+    it('should return an array of products', async function () {
+      // Use the sandbox to create the stub
+      sandbox.stub(connection, 'execute').resolves([mockProducts]);
 
-    const product = await ProductsModel.findProductById(1);
-    expect(product).to.deep.equal(mockProduct);
+      const products = await ProductsModel.findAllProducts();
 
-    stub.restore();
+      expect(products).to.eql(mockProducts);
+    });
   });
 
-  it('should return a not found message if no matching ID is found', async function () {
-    const mockMessage = { message: 'Product not found' };
-    const stub = sinon.stub(ProductsModel, 'findProductById').returns(mockMessage);
-
-    const product = await ProductsModel.findProductById(999);
-    expect(product).to.deep.equal(mockMessage);
-
-    stub.restore();
+  describe('findProductById()', function () {
+    it('should return a product', async function () {
+      // Use the sandbox to create the stub
+      sandbox.stub(connection, 'execute').resolves([[mockProducts[0]]]); // Note the double array
+  
+      const product = await ProductsModel.findProductById(1);
+  
+      expect(product).to.eql(mockProducts[0]);
+    });
   });
 
-  it('should create a new product', async function () {
-    const mockProduct = { id: 1, name: 'Product 1' };
-    const stub = sinon.stub(ProductsModel, 'createProduct').returns(mockProduct);
+  describe('createProduct()', function () {
+    it('should create a product', async function () {
+      // Use the sandbox to create the stub
+      sandbox.stub(connection, 'execute').resolves([{ insertId: 1 }]);
 
-    const product = await ProductsModel.createProduct('Product 1');
-    expect(product).to.deep.equal(mockProduct);
+      const product = await ProductsModel.createProduct('Product 1');
 
-    stub.restore();
+      expect(product).to.eql({ id: 1, name: 'Product 1' });
+    });
+  });
+
+  describe('updateProduct()', function () {
+    it('should update a product', async function () {
+      // Use the sandbox to create the stub
+      sandbox.stub(connection, 'execute').resolves([{ affectedRows: 1 }]);
+
+      const product = await ProductsModel.updateProduct(1, 'Product 1');
+
+      expect(product.affectedRows).to.eql(1);
+    });
   });
 });
