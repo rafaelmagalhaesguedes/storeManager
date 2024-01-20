@@ -59,4 +59,15 @@ describe('Products Model', function () {
       expect(product.affectedRows).to.eql(1);
     });
   });
+
+  describe('deleteProduct()', function () {
+    it('should delete a product', async function () {
+      // Use the sandbox to create the stub
+      sandbox.stub(connection, 'execute').resolves([{ affectedRows: 1 }]);
+
+      const product = await ProductsModel.deleteProduct(1);
+
+      expect(product.affectedRows).to.eql(1);
+    });
+  }); 
 });
