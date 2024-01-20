@@ -16,6 +16,8 @@ const findProductById = async (id) => {
 
 const createProduct = async (name) => {
   const product = await productsModel.createProduct(name);
+
+  if (!product) throw new Error('Product name is required');
   
   return product;
 };
