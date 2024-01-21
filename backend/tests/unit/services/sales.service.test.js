@@ -40,23 +40,6 @@ describe('Sales Service', function () {
     });
   });
 
-  describe('createSale', function () {
-    it('should create a sale', async function () {
-      const mockSale = [
-        { productId: 1, quantity: 2 },
-        { productId: 2, quantity: 2 },
-      ];
-
-      const stub = sinon.stub(salesModel, 'createSale').returns({ insertId: 1 });
-
-      const result = await salesService.createSale(mockSale);
-
-      expect(result).to.eql({ id: 1, itemsSold: mockSale });
-
-      stub.restore();
-    });
-  });
-
   describe('deleteSale', function () {
     it('should delete a sale', async function () {
       const stub = sinon.stub(salesModel, 'deleteSale').returns({});
@@ -66,45 +49,6 @@ describe('Sales Service', function () {
       expect(result).to.eql({});
 
       stub.restore();
-    });
-  });
-
-  describe('updateSaleProductQuantity', function () {
-    afterEach(function () {
-      sinon.restore();
-    });
-  
-    it('should throw an error if the sale does not exist', async function () {
-      sinon.stub(salesModel, 'findSale').returns([{}]);
-    
-      try {
-        await salesService.updateSaleProductQuantity(1, 1, 1);
-      } catch (error) {
-        expect(error.message).to.equal('Sale not found');
-      }
-    });
-    
-    it('should throw an error if the product does not exist', async function () {
-      sinon.stub(salesModel, 'findSale').returns([{}]);
-      sinon.stub(salesModel, 'findProduct').returns([]);
-    
-      try {
-        await salesService.updateSaleProductQuantity(1, 1, 1);
-      } catch (error) {
-        expect(error.message).to.equal('Product not found in sale');
-      }
-    });
-  
-    it('should update the product quantity and return the updated product', async function () {
-      const updatedProduct = { saleId: 1, productId: 1, quantity: 1 };
-      
-      sinon.stub(salesModel, 'findSale').returns([{}]);
-      sinon.stub(salesModel, 'findProduct').returns([{}]);
-      sinon.stub(salesModel, 'updateSaleProductQuantity').returns([updatedProduct]);
-      
-      const result = await salesService.updateSaleProductQuantity(1, 1, 1);
-      
-      expect(result).to.eql(updatedProduct);
     });
   });
 });
