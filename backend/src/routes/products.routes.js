@@ -8,6 +8,9 @@ router.use(express.json());
 // Routes of products
 router.get('/products', productsController.getAllProducts);
 
+// Routes of products search
+router.get('/products/search', productsController.searchProduct);
+
 // Routes of products by id
 router.get('/products/:id', productsController.getProductById);
 
