@@ -69,5 +69,16 @@ describe('Products Model', function () {
 
       expect(product.affectedRows).to.eql(1);
     });
-  }); 
+  });
+
+  describe('searchProduct()', function () {
+    it('should return an array of products', async function () {
+      // Use the sandbox to create the stub
+      sandbox.stub(connection, 'execute').resolves([mockProducts]);
+
+      const products = await ProductsModel.searchProduct('Product');
+
+      expect(products).to.eql(mockProducts);
+    });
+  });
 });
