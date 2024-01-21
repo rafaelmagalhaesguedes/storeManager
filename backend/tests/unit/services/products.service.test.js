@@ -109,4 +109,56 @@ describe('Products Service', function () {
       }
     });
   });
+
+  describe('deleteProduct', function () {
+    afterEach(function () {
+      sinon.restore();
+    });
+
+    it('should delete an existing product', async function () {
+      const mockProduct = { id: 1, name: 'Product 1' };
+
+      sinon.stub(productsModel, 'findProductById').returns(mockProduct);
+
+      sinon.stub(productsModel, 'deleteProduct').returns(Promise.resolve());
+
+      const result = await productsService.deleteProduct(mockProduct.id);
+
+      expect(result).to.equal(undefined);
+    });
+
+    it('should throw an error if the product does not exist', async function () {
+      const productId = 1;
+
+      sinon.stub(productsModel, 'findProductById').returns(null);
+
+      try {
+        await productsService.deleteProduct(productId);
+      } catch (error) {
+        expect(error).to.be.an('error');
+        expect(error.message).to.equal('Product not found');
+      }
+    });
+  });
+
+  describe('searchProduct', function () {
+    afterEach(function () {
+      sinon.restore(); // Restore all stubs after each test
+    });
+
+    it('should return all products that match the search query', async function () {
+      const mockProducts3 = [
+        { id: 1, name: 'Product 1' },
+        { id: 2, name: 'Traje de encolhimento' },
+        { id: 3, name: 'Escudo do Capitão América' },
+      ];
+
+      sinon.stub(productsModel, 'searchProduct').returns(mockProducts3);
+
+      const products = await productsService.searchProduct('Product');
+  
+      expect(products).to.be.an('array');
+      expect(products).to.deep.equal(mockProducts3);
+    });
+  });
 });
