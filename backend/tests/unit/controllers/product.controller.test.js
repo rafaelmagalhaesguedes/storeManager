@@ -7,20 +7,13 @@ const { expect } = chai;
 
 const productNotFound = new Error('Product not found');
 
+const mockProduct = { id: 1, name: 'Product 1' };
+
+const mockProducts = [{ id: 1, name: 'Product 1' }, { id: 2, name: 'Product 2' }];
+
 describe('Products Controller', function () {
   describe('Get All Products', function () {
     it('should return all products', async function () {
-      const mockProducts = [
-        {
-          id: 1,
-          name: 'Product 1',
-        },
-        {
-          id: 2,
-          name: 'Product 2',
-        },
-      ];
-
       const req = {};
 
       const res = {
@@ -42,11 +35,6 @@ describe('Products Controller', function () {
 
   describe('Get Product By Id', function () {
     it('should return a product', async function () {
-      const mockProduct = {
-        id: 1,
-        name: 'Product 1',
-      };
-
       const req = {
         params: { id: 1 },
       };
@@ -91,11 +79,6 @@ describe('Products Controller', function () {
   
   describe('Create Product', function () {
     it('should create a product', async function () {
-      const mockProduct = {
-        id: 1,
-        name: 'Product 1',
-      };
-      
       const req = {
         body: mockProduct,
       };
@@ -116,11 +99,6 @@ describe('Products Controller', function () {
     });
 
     it('should return an error when name is empty', async function () {
-      const mockProduct = {
-        id: 1,
-        name: '',
-      };
-        
       const req = {
         body: mockProduct,
       };
@@ -143,11 +121,6 @@ describe('Products Controller', function () {
 
   describe('Update Product', function () {
     it('should update a product', async function () {
-      const mockProduct = {
-        id: 1,
-        name: 'Updated Product',
-      };
-      
       const req = {
         params: { id: 1 },
         body: mockProduct,
@@ -237,6 +210,28 @@ describe('Products Controller', function () {
         expect(res.status.calledOnceWith(404)).to.equal(true);
         expect(res.json.calledOnceWith({ message: 'Product not found' })).to.equal(true);
       }
+    });
+  });
+
+  describe('Searh Product', function () {
+    it('should return a product', async function () {
+      const req = {
+        query: { q: 'Product 1' },
+      };
+
+      const res = {
+        status: sinon.stub().returnsThis(),
+        json: sinon.stub(),
+      };
+
+      const stub = sinon.stub(productsService, 'searchProduct').returns(mockProduct);
+
+      await productsController.searchProduct(req, res);
+
+      expect(res.status.calledOnceWith(200)).to.equal(true);
+      expect(res.json.calledOnceWith(mockProduct)).to.equal(true);
+
+      stub.restore();
     });
   });
 });
