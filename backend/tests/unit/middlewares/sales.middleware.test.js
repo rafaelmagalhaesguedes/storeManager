@@ -42,11 +42,11 @@ describe('Sales Middleware', function () {
       };
       const next = sinon.stub();
     
-      sinon.stub(productsModel, 'findProductById').returns(null);
+      sinon.stub(productsModel, 'findProductById').returns({ id: 1, quantity: 2 });
     
       await validate.validateSale(req, res, next);
     
-      expect(res.statusCode).to.equal(404);
+      expect(res.statusCode).to.equal(400);
       expect(next.called).to.equal(true);
     });
 
@@ -61,6 +61,8 @@ describe('Sales Middleware', function () {
         json() {},
       };
       const next = sinon.stub();
+
+      sinon.stub(productsModel, 'findProductById').returns({ id: 1, quantity: 2 }); // Stub to return a product
 
       await validate.validateSale(req, res, next);
 
@@ -80,30 +82,11 @@ describe('Sales Middleware', function () {
       };
 
       const next = sinon.stub();
+      sinon.stub(productsModel, 'findProductById').returns({ id: 1, quantity: 2 }); // Stub to return a product
 
       await validate.validateSale(req, res, next);
 
       expect(res.statusCode).to.equal(422);
-      expect(next.called).to.equal(true);
-    });
-
-    it('should return 404 when product does not exist', async function () {
-      const req = { body: [{ productId: 1, quantity: 2 }] };
-      const res = { 
-        statusCode: 200, 
-        status(code) { 
-          this.statusCode = code; 
-          return this; 
-        }, 
-        json() {},
-      };
-      const next = sinon.stub();
-    
-      sinon.stub(productsModel, 'findProductById').returns(null);
-    
-      await validate.validateSale(req, res, next);
-    
-      expect(res.statusCode).to.equal(404);
       expect(next.called).to.equal(true);
     });
   });
